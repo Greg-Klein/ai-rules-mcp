@@ -13,7 +13,7 @@ services:
       # GIT_TOKEN: "${GIT_TOKEN}"  # set via .env file or CI secret
 
       # ── Optional ──────────────────────────────────────
-      SKILLS_REPO_BRANCH: "main"
+      SKILLS_REPO_BRANCH: "master"
       SKILLS_SUBDIR: "skills" # path inside repo where SKILL.md files live
       SYNC_INTERVAL_SEC: "300" # pull every 5 min
       PORT: "3000"
