@@ -1,5 +1,5 @@
 {
-  "name": "@team/ai-rules-mcp",
+  "name": "@gklein/ai-rules-mcp",
   "version": "1.0.0",
   "description": "Centralized MCP Server — Serve AI skills & rules from a GitHub repo",
   "type": "module",
