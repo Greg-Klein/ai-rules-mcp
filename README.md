@@ -1,7 +1,7 @@
 # 🧠 AI Rules MCP Server (Docker)
 
-Serveur MCP centralisé qui sert des **skills IA et bonnes pratiques** à toute l'équipe.
-Les skills sont stockés dans un **repo GitHub/GitLab** et synchronisés automatiquement.
+Centralized MCP server that serves **AI skills and best practices** to the whole team.
+Skills are stored in a **GitHub/GitLab repo** and synchronized automatically.
 
 ```
 ┌─────────────┐                        ┌──────────────────────┐         ┌─────────────┐
@@ -14,87 +14,86 @@ Les skills sont stockés dans un **repo GitHub/GitLab** et synchronisés automat
 
 ## Quick Start
 
-### 1. Préparer le repo de skills sur GitHub
+### 1. Set up the skills repo on GitHub
 
-Créer un repo avec cette structure :
+Create a repo with this structure:
 
 ```
-your-org/ai-rules-skills/
-└── skills/
-    ├── react/SKILL.md
-    ├── typescript/SKILL.md
-    ├── testing/SKILL.md
-    ├── security/SKILL.md
-    └── java-spring/SKILL.md
+skills/
+  ├── react/SKILL.md
+  ├── typescript/SKILL.md
+  ├── testing/SKILL.md
+  ├── security/SKILL.md
+  └── java-spring/SKILL.md
 ```
 
-Chaque `SKILL.md` a un frontmatter YAML :
+Each `SKILL.md` has a YAML frontmatter:
 
 ```yaml
 ---
 name: react
 description: React best practices
-patterns: ["**/*.tsx", "**/*.jsx"] # quels fichiers déclenchent ce skill
-tags: [react, frontend] # pour activation manuelle
+patterns: ["**/*.tsx", "**/*.jsx"] # which files trigger this skill
+tags: [react, frontend] # for manual activation
 priority: high # high | normal | low
-always: false # true = toujours inclus
+always: false # true = always included
 ---
-Contenu Markdown du skill...
+Markdown content of the skill...
 ```
 
-### 2. Lancer le serveur
+### 2. Start the server
 
 ```bash
-# Cloner ce repo
+# Clone this repo
 git clone git@github.com:your-org/ai-rules-mcp.git
 cd ai-rules-mcp
 
-# Configurer
+# Configure
 cp .env.example .env
-# Editer .env avec l'URL de votre repo de skills
+# Edit .env with your skills repo URL
 
-# Lancer
+# Start
 docker compose up -d
 ```
 
-Vérifier que tout fonctionne :
+Verify it works:
 
 ```bash
 curl http://localhost:3000/health
 # {"status":"ok","skillsDir":"/data/skills-repo/skills","repo":"https://***@github.com/..."}
 ```
 
-### 3. Configurer son IDE
+### 3. Configure your IDE
 
-Voir la section **Configuration IDE** ci-dessous.
+See the **IDE Configuration** section below.
 
-## Variables d'environnement
+## Environment variables
 
-| Variable             | Requis | Défaut   | Description                                        |
-| -------------------- | ------ | -------- | -------------------------------------------------- |
-| `SKILLS_REPO_URL`    | ✅     | —        | URL HTTPS du repo Git contenant les skills         |
-| `GIT_TOKEN`          | ❌     | —        | GitHub PAT pour les repos privés                   |
-| `SKILLS_REPO_BRANCH` | ❌     | `master` | Branche à suivre                                   |
-| `SKILLS_SUBDIR`      | ❌     | `skills` | Sous-dossier dans le repo contenant les `SKILL.md` |
-| `SYNC_INTERVAL_SEC`  | ❌     | `300`    | Intervalle de synchronisation en secondes          |
-| `PORT`               | ❌     | `3000`   | Port HTTP                                          |
+| Variable             | Required | Default  | Description                                           |
+| -------------------- | -------- | -------- | ----------------------------------------------------- |
+| `SKILLS_REPO_URL`    | ✅       | —        | HTTPS URL of the Git repo containing the skills       |
+| `GIT_TOKEN`          | ❌       | —        | GitHub PAT for private repos                          |
+| `SKILLS_REPO_BRANCH` | ❌       | `master` | Branch to follow                                      |
+| `SKILLS_SUBDIR`      | ❌       | `skills` | Subfolder in the repo containing the `SKILL.md` files |
+| `SYNC_INTERVAL_SEC`  | ❌       | `300`    | Sync interval in seconds                              |
+| `PORT`               | ❌       | `3000`   | HTTP port                                             |
 
-### Repo privé
+### Private repo
 
-Pour un repo privé, créer un **GitHub Personal Access Token** (Fine-grained, scope `Contents: read`) et le passer au container :
+For a private repo, create a **GitHub Personal Access Token** (Fine-grained, scope `Contents: read`) and pass it to the container:
 
 ```bash
-# Dans .env
+# In .env
 GIT_TOKEN=ghp_xxxxxxxxxxxxxx
 ```
 
 ```yaml
-# docker-compose.yml — décommenter :
+# docker-compose.yml — uncomment:
 environment:
   GIT_TOKEN: "${GIT_TOKEN}"
 ```
 
-## Configuration IDE
+## IDE Configuration
 
 ### Claude Code
 
@@ -102,9 +101,9 @@ environment:
 claude mcp add --transport http ai-rules http://localhost:3000/mcp
 ```
 
-C'est tout. Claude Code découvre automatiquement les tools `get_rules`, `list_skills` et `get_skill`.
+That’s it. Claude Code automatically discovers the `get_rules`, `list_skills`, and `get_skill` tools.
 
-Pour vérifier :
+To verify:
 
 ```bash
 claude mcp list
@@ -112,7 +111,7 @@ claude mcp list
 
 ### Cursor
 
-Créer `.cursor/mcp.json` à la racine du projet :
+Create `.cursor/mcp.json` at the project root:
 
 ```json
 {
@@ -126,7 +125,7 @@ Créer `.cursor/mcp.json` à la racine du projet :
 
 ### Cline / Roo Code
 
-Dans les settings de l'extension → MCP Servers :
+In the extension settings → MCP Servers:
 
 ```json
 {
@@ -138,7 +137,7 @@ Dans les settings de l'extension → MCP Servers :
 
 ### Windsurf
 
-Dans `~/.codeium/windsurf/mcp_config.json` :
+In `~/.codeium/windsurf/mcp_config.json`:
 
 ```json
 {
@@ -150,15 +149,15 @@ Dans `~/.codeium/windsurf/mcp_config.json` :
 }
 ```
 
-## Outils MCP exposés
+## Exposed MCP tools
 
-| Outil         | Description                                                  |
-| ------------- | ------------------------------------------------------------ |
-| `get_rules`   | Retourne les skills matchant un chemin de fichier et/ou tags |
-| `list_skills` | Liste tous les skills disponibles (noms + descriptions)      |
-| `get_skill`   | Récupère un skill spécifique par nom                         |
+| Tool          | Description                                       |
+| ------------- | ------------------------------------------------- |
+| `get_rules`   | Returns skills matching a file path and/or tags   |
+| `list_skills` | Lists all available skills (names + descriptions) |
+| `get_skill`   | Fetches a specific skill by name                  |
 
-### Exemple d'appel `get_rules`
+### Example `get_rules` call
 
 ```json
 {
@@ -167,29 +166,29 @@ Dans `~/.codeium/windsurf/mcp_config.json` :
 }
 ```
 
-→ Retourne : **react** + **typescript-strict** + **testing** + **security** (always)
+→ Returns: **react** + **typescript-strict** + **testing** + **security** (always)
 
-## Créer un nouveau skill
+## Creating a new skill
 
-1. Ajouter un dossier dans le repo de skills GitHub :
+1. Add a folder in the GitHub skills repo:
 
 ```bash
-mkdir skills/mon-skill
+mkdir skills/my-skill
 ```
 
-2. Créer `skills/mon-skill/SKILL.md` avec le frontmatter YAML.
+2. Create `skills/my-skill/SKILL.md` with the YAML frontmatter.
 
-3. Push sur `master` → le serveur le récupère automatiquement sous 5 minutes (configurable via `SYNC_INTERVAL_SEC`).
+3. Push to `master` → the server picks it up automatically within 5 minutes (configurable via `SYNC_INTERVAL_SEC`).
 
-## Architecture du projet
+## Project architecture
 
 ```
 ai-rules-mcp/
 ├── src/
 │   ├── index.ts          # Express server + MCP tools (HTTP transport)
-│   ├── skills.ts         # Chargement et matching context-aware
-│   └── git-sync.ts       # Clone + pull périodique depuis GitHub
-├── skills/               # Skills d'exemple (utilisés si pas de repo configuré)
+│   ├── skills.ts         # Context-aware loading and matching
+│   └── git-sync.ts       # Clone + periodic pull from GitHub
+├── skills/               # Example skills (used when no repo is configured)
 ├── Dockerfile
 ├── docker-compose.yml
 ├── .env.example
