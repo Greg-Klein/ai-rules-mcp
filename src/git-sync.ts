@@ -3,15 +3,15 @@
  *
  * Environment variables:
  *   SKILLS_REPO_URL    — Git clone URL (HTTPS or SSH)
- *   SKILLS_REPO_BRANCH — Branch to track (default: main)
+ *   SKILLS_REPO_BRANCH — Branch to track (default: master)
  *   SKILLS_SUBDIR      — Subdirectory inside the repo containing skills (default: skills)
  *   SYNC_INTERVAL_SEC  — How often to pull updates (default: 300 = 5 min)
  *   GIT_TOKEN           — Optional GitHub PAT for private repos (injected into HTTPS URL)
  */
 
-import { simpleGit, SimpleGit } from "simple-git";
 import fs from "node:fs";
 import path from "node:path";
+import { simpleGit, SimpleGit } from "simple-git";
 
 const CLONE_DIR = "/data/skills-repo";
 
@@ -34,7 +34,7 @@ export function getSyncConfig(): SyncConfig {
 
   return {
     repoUrl: finalUrl,
-    branch: process.env.SKILLS_REPO_BRANCH ?? "main",
+    branch: process.env.SKILLS_REPO_BRANCH ?? "master",
     skillsSubdir: process.env.SKILLS_SUBDIR ?? "skills",
     syncIntervalSec: parseInt(process.env.SYNC_INTERVAL_SEC ?? "300", 10),
   };
@@ -52,7 +52,9 @@ export function getSkillsPath(config: SyncConfig): string {
  */
 export async function syncOnce(config: SyncConfig): Promise<void> {
   if (!config.repoUrl) {
-    console.warn("⚠️  SKILLS_REPO_URL not set — using local /data/skills as fallback");
+    console.warn(
+      "⚠️  SKILLS_REPO_URL not set — using local /data/skills as fallback",
+    );
     return;
   }
 

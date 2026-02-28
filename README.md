@@ -34,12 +34,11 @@ Chaque `SKILL.md` a un frontmatter YAML :
 ---
 name: react
 description: React best practices
-patterns: ["**/*.tsx", "**/*.jsx"]     # quels fichiers déclenchent ce skill
-tags: [react, frontend]                # pour activation manuelle
-priority: high                         # high | normal | low
-always: false                          # true = toujours inclus
+patterns: ["**/*.tsx", "**/*.jsx"] # quels fichiers déclenchent ce skill
+tags: [react, frontend] # pour activation manuelle
+priority: high # high | normal | low
+always: false # true = toujours inclus
 ---
-
 Contenu Markdown du skill...
 ```
 
@@ -71,14 +70,14 @@ Voir la section **Configuration IDE** ci-dessous.
 
 ## Variables d'environnement
 
-| Variable              | Requis | Défaut   | Description                                         |
-|-----------------------|--------|----------|-----------------------------------------------------|
-| `SKILLS_REPO_URL`     | ✅     | —        | URL HTTPS du repo Git contenant les skills           |
-| `GIT_TOKEN`           | ❌     | —        | GitHub PAT pour les repos privés                     |
-| `SKILLS_REPO_BRANCH`  | ❌     | `main`   | Branche à suivre                                     |
-| `SKILLS_SUBDIR`       | ❌     | `skills` | Sous-dossier dans le repo contenant les `SKILL.md`   |
-| `SYNC_INTERVAL_SEC`   | ❌     | `300`    | Intervalle de synchronisation en secondes             |
-| `PORT`                | ❌     | `3000`   | Port HTTP                                            |
+| Variable             | Requis | Défaut   | Description                                        |
+| -------------------- | ------ | -------- | -------------------------------------------------- |
+| `SKILLS_REPO_URL`    | ✅     | —        | URL HTTPS du repo Git contenant les skills         |
+| `GIT_TOKEN`          | ❌     | —        | GitHub PAT pour les repos privés                   |
+| `SKILLS_REPO_BRANCH` | ❌     | `master` | Branche à suivre                                   |
+| `SKILLS_SUBDIR`      | ❌     | `skills` | Sous-dossier dans le repo contenant les `SKILL.md` |
+| `SYNC_INTERVAL_SEC`  | ❌     | `300`    | Intervalle de synchronisation en secondes          |
+| `PORT`               | ❌     | `3000`   | Port HTTP                                          |
 
 ### Repo privé
 
@@ -153,11 +152,11 @@ Dans `~/.codeium/windsurf/mcp_config.json` :
 
 ## Outils MCP exposés
 
-| Outil         | Description                                                            |
-|---------------|------------------------------------------------------------------------|
-| `get_rules`   | Retourne les skills matchant un chemin de fichier et/ou tags           |
-| `list_skills` | Liste tous les skills disponibles (noms + descriptions)                |
-| `get_skill`   | Récupère un skill spécifique par nom                                   |
+| Outil         | Description                                                  |
+| ------------- | ------------------------------------------------------------ |
+| `get_rules`   | Retourne les skills matchant un chemin de fichier et/ou tags |
+| `list_skills` | Liste tous les skills disponibles (noms + descriptions)      |
+| `get_skill`   | Récupère un skill spécifique par nom                         |
 
 ### Exemple d'appel `get_rules`
 
@@ -180,7 +179,7 @@ mkdir skills/mon-skill
 
 2. Créer `skills/mon-skill/SKILL.md` avec le frontmatter YAML.
 
-3. Push sur `main` → le serveur le récupère automatiquement sous 5 minutes (configurable via `SYNC_INTERVAL_SEC`).
+3. Push sur `master` → le serveur le récupère automatiquement sous 5 minutes (configurable via `SYNC_INTERVAL_SEC`).
 
 ## Architecture du projet
 
