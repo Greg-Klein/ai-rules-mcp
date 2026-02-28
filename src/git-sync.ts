@@ -71,6 +71,7 @@ export async function syncOnce(config: SyncConfig): Promise<void> {
     // Fresh clone
     console.log(`📦 Cloning ${config.repoUrl} (branch: ${config.branch})...`);
     fs.mkdirSync(CLONE_DIR, { recursive: true });
+    // Shallow clone (depth=1) + single-branch to minimize bandwidth and disk usage
     await git.clone(config.repoUrl, CLONE_DIR, [
       "--branch",
       config.branch,

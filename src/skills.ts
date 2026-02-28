@@ -35,6 +35,10 @@ export interface MatchContext {
   tags?: string[];
 }
 
+// Additive score contribution based on declared priority.
+// A skill with only `priority: normal` earns exactly 2 points,
+// which is equal to the threshold (> 2) — so it is excluded unless
+// it also matches by file pattern or tags.
 const PRIORITY_WEIGHT: Record<string, number> = {
   high: 3,
   normal: 2,
@@ -85,8 +89,10 @@ export function matchSkills(skills: Skill[], ctx: MatchContext): Skill[] {
   for (const skill of skills) {
     let score = 0;
 
+    // `always: true` guarantees inclusion regardless of context
     if (skill.meta.always) score += 10;
 
+    // +5 if the file path matches at least one glob pattern (first match wins)
     if (ctx.filePath && skill.meta.patterns?.length) {
       for (const pattern of skill.meta.patterns) {
         if (minimatch(ctx.filePath, pattern, { matchBase: true })) {
@@ -96,6 +102,7 @@ export function matchSkills(skills: Skill[], ctx: MatchContext): Skill[] {
       }
     }
 
+    // +3 per matching tag (case-insensitive)
     if (ctx.tags?.length && skill.meta.tags?.length) {
       const overlap = ctx.tags.filter((t) =>
         skill.meta.tags!.some((st) => st.toLowerCase() === t.toLowerCase())
@@ -103,8 +110,11 @@ export function matchSkills(skills: Skill[], ctx: MatchContext): Skill[] {
       score += overlap.length * 3;
     }
 
+    // Add priority weight (high=3, normal=2, low=1)
     score += PRIORITY_WEIGHT[skill.meta.priority ?? "normal"] ?? 2;
 
+    // Exclude skills that only earned their base priority weight (no real match).
+    // `always` skills bypass this filter.
     if (score > 2 || skill.meta.always) {
       scored.push({ skill, score });
     }

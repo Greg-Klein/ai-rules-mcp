@@ -175,6 +175,8 @@ app.post("/mcp", async (req: Request, res: Response) => {
       sessionIdGenerator: undefined, // stateless
     });
 
+    // Clean up transport and server when the HTTP connection closes
+    // (client disconnect, timeout, or normal end-of-response)
     res.on("close", () => {
       transport.close();
       server.close();
