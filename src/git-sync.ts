@@ -11,9 +11,9 @@
 
 import fs from "node:fs";
 import path from "node:path";
-import { simpleGit, SimpleGit } from "simple-git";
+import { simpleGit } from "simple-git";
 
-const CLONE_DIR = "/data/skills-repo";
+const CLONE_DIR = process.env.CLONE_DIR ?? "/data/skills-repo";
 
 export interface SyncConfig {
   repoUrl: string;
@@ -36,7 +36,7 @@ export function getSyncConfig(): SyncConfig {
     repoUrl: finalUrl,
     branch: process.env.SKILLS_REPO_BRANCH ?? "master",
     skillsSubdir: process.env.SKILLS_SUBDIR ?? "skills",
-    syncIntervalSec: parseInt(process.env.SYNC_INTERVAL_SEC ?? "300", 10),
+    syncIntervalSec: Math.max(0, parseInt(process.env.SYNC_INTERVAL_SEC ?? "300", 10) || 300),
   };
 }
 
@@ -50,6 +50,10 @@ export function getSkillsPath(config: SyncConfig): string {
 /**
  * Initial clone or pull if already cloned.
  */
+function maskUrl(url: string): string {
+  return url.replace(/\/\/[^@]+@/, "//***@");
+}
+
 export async function syncOnce(config: SyncConfig): Promise<void> {
   if (!config.repoUrl) {
     console.warn(
@@ -57,8 +61,6 @@ export async function syncOnce(config: SyncConfig): Promise<void> {
     );
     return;
   }
-
-  const git: SimpleGit = simpleGit();
 
   if (fs.existsSync(path.join(CLONE_DIR, ".git"))) {
     // Already cloned — pull latest
@@ -69,10 +71,10 @@ export async function syncOnce(config: SyncConfig): Promise<void> {
     console.log("✅ Skills updated");
   } else {
     // Fresh clone
-    console.log(`📦 Cloning ${config.repoUrl} (branch: ${config.branch})...`);
+    console.log(`📦 Cloning ${maskUrl(config.repoUrl)} (branch: ${config.branch})...`);
     fs.mkdirSync(CLONE_DIR, { recursive: true });
     // Shallow clone (depth=1) + single-branch to minimize bandwidth and disk usage
-    await git.clone(config.repoUrl, CLONE_DIR, [
+    await simpleGit().clone(config.repoUrl, CLONE_DIR, [
       "--branch",
       config.branch,
       "--depth",
@@ -86,7 +88,7 @@ export async function syncOnce(config: SyncConfig): Promise<void> {
 /**
  * Start periodic sync in the background.
  */
-export function startPeriodicSync(config: SyncConfig): () => void {
+export function startPeriodicSync(config: SyncConfig, onSync?: () => void): () => void {
   if (!config.repoUrl || config.syncIntervalSec <= 0) return () => {};
 
   const intervalMs = config.syncIntervalSec * 1000;
@@ -99,6 +101,7 @@ export function startPeriodicSync(config: SyncConfig): () => void {
     running = true;
     try {
       await syncOnce(config);
+      onSync?.();
     } catch (err) {
       console.error("❌ Periodic sync failed:", err);
     } finally {

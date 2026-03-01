@@ -46,10 +46,22 @@ const PRIORITY_WEIGHT: Record<string, number> = {
 };
 
 // ---------------------------------------------------------------------------
-// Loader
+// Loader (with in-memory cache)
 // ---------------------------------------------------------------------------
 
+let cachedSkills: Skill[] | null = null;
+let cachedSkillsDir: string | null = null;
+
+export function invalidateSkillsCache(): void {
+  cachedSkills = null;
+  cachedSkillsDir = null;
+}
+
 export async function loadSkills(skillsDir: string): Promise<Skill[]> {
+  if (cachedSkills && cachedSkillsDir === skillsDir) {
+    return cachedSkills;
+  }
+
   const files = await fg("**/SKILL.md", {
     cwd: skillsDir,
     absolute: false,
@@ -76,6 +88,8 @@ export async function loadSkills(skillsDir: string): Promise<Skill[]> {
     });
   }
 
+  cachedSkills = skills;
+  cachedSkillsDir = skillsDir;
   return skills;
 }
 
