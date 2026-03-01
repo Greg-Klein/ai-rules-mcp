@@ -215,16 +215,25 @@ async function main() {
   }
 
   // 2. Start periodic sync
-  startPeriodicSync(syncConfig);
+  const stopSync = startPeriodicSync(syncConfig);
 
   // 3. Start HTTP server
-  app.listen(PORT, "0.0.0.0", () => {
+  const server = app.listen(PORT, "0.0.0.0", () => {
     console.log(`\n🚀 ai-rules-mcp server running`);
     console.log(`   MCP endpoint: http://0.0.0.0:${PORT}/mcp`);
     console.log(`   Health check: http://0.0.0.0:${PORT}/health`);
     console.log(`   Skills dir:   ${skillsDir}`);
     console.log();
   });
+
+  // Graceful shutdown
+  const shutdown = () => {
+    console.log("\n🛑 Shutting down...");
+    stopSync();
+    server.close(() => process.exit(0));
+  };
+  process.on("SIGTERM", shutdown);
+  process.on("SIGINT", shutdown);
 }
 
 main().catch((err) => {

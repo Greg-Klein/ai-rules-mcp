@@ -86,17 +86,25 @@ export async function syncOnce(config: SyncConfig): Promise<void> {
 /**
  * Start periodic sync in the background.
  */
-export function startPeriodicSync(config: SyncConfig): void {
-  if (!config.repoUrl || config.syncIntervalSec <= 0) return;
+export function startPeriodicSync(config: SyncConfig): () => void {
+  if (!config.repoUrl || config.syncIntervalSec <= 0) return () => {};
 
   const intervalMs = config.syncIntervalSec * 1000;
+  let running = false;
+
   console.log(`⏱️  Auto-sync every ${config.syncIntervalSec}s`);
 
-  setInterval(async () => {
+  const id = setInterval(async () => {
+    if (running) return;
+    running = true;
     try {
       await syncOnce(config);
     } catch (err) {
       console.error("❌ Periodic sync failed:", err);
+    } finally {
+      running = false;
     }
   }, intervalMs);
+
+  return () => clearInterval(id);
 }
