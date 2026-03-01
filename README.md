@@ -69,14 +69,15 @@ See the **IDE Configuration** section below.
 
 ## Environment variables
 
-| Variable             | Required | Default  | Description                                           |
-| -------------------- | -------- | -------- | ----------------------------------------------------- |
-| `SKILLS_REPO_URL`    | ✅       | —        | HTTPS URL of the Git repo containing the skills       |
-| `GIT_TOKEN`          | ❌       | —        | GitHub PAT for private repos                          |
-| `SKILLS_REPO_BRANCH` | ❌       | `master` | Branch to follow                                      |
-| `SKILLS_SUBDIR`      | ❌       | `skills` | Subfolder in the repo containing the `SKILL.md` files |
-| `SYNC_INTERVAL_SEC`  | ❌       | `300`    | Sync interval in seconds                              |
-| `PORT`               | ❌       | `3000`   | HTTP port                                             |
+| Variable             | Required | Default             | Description                                           |
+| -------------------- | -------- | ------------------- | ----------------------------------------------------- |
+| `SKILLS_REPO_URL`    | ✅       | —                   | HTTPS URL of the Git repo containing the skills       |
+| `GIT_TOKEN`          | ❌       | —                   | GitHub PAT for private repos                          |
+| `SKILLS_REPO_BRANCH` | ❌       | `master`            | Branch to follow                                      |
+| `SKILLS_SUBDIR`      | ❌       | `skills`            | Subfolder in the repo containing the `SKILL.md` files |
+| `SYNC_INTERVAL_SEC`  | ❌       | `300`               | Sync interval in seconds                              |
+| `CLONE_DIR`          | ❌       | `/data/skills-repo` | Local path where the skills repo is cloned            |
+| `PORT`               | ❌       | `3000`              | HTTP port                                             |
 
 ### Private repo
 
