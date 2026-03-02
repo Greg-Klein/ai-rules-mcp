@@ -45,7 +45,7 @@ Markdown content of the skill...
 
 ```bash
 # Clone this repo
-git clone git@github.com:your-org/ai-rules-mcp.git
+git clone git@github.com:Greg-Klein/ai-rules-mcp.git
 cd ai-rules-mcp
 
 # Configure
