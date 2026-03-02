@@ -6,7 +6,8 @@
  *   SKILLS_REPO_BRANCH — Branch to track (default: master)
  *   SKILLS_SUBDIR      — Subdirectory inside the repo containing skills (default: skills)
  *   SYNC_INTERVAL_SEC  — How often to pull updates (default: 300 = 5 min)
- *   GIT_TOKEN           — Optional GitHub PAT for private repos (injected into HTTPS URL)
+ *   GIT_TOKEN           — Optional PAT for private repos (injected into HTTPS URL)
+ *   GIT_USERNAME        — Optional username for token auth (e.g. "oauth2" for GitLab PATs)
  */
 
 import fs from "node:fs";
@@ -26,10 +27,14 @@ export function getSyncConfig(): SyncConfig {
   const repoUrl = process.env.SKILLS_REPO_URL ?? "";
   const token = process.env.GIT_TOKEN;
 
-  // Inject token into HTTPS URL if provided: https://TOKEN@github.com/org/repo.git
+  // Inject token into HTTPS URL if provided.
+  // GitHub:  https://TOKEN@github.com/org/repo.git           (no username needed)
+  // GitLab:  https://oauth2:TOKEN@gitlab.com/org/repo.git    (GIT_USERNAME=oauth2)
   let finalUrl = repoUrl;
   if (token && repoUrl.startsWith("https://")) {
-    finalUrl = repoUrl.replace("https://", `https://${token}@`);
+    const username = process.env.GIT_USERNAME;
+    const credentials = username ? `${username}:${token}` : token;
+    finalUrl = repoUrl.replace("https://", `https://${credentials}@`);
   }
 
   return {

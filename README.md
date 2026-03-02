@@ -72,7 +72,8 @@ See the **IDE Configuration** section below.
 | Variable             | Required | Default             | Description                                           |
 | -------------------- | -------- | ------------------- | ----------------------------------------------------- |
 | `SKILLS_REPO_URL`    | ✅       | —                   | HTTPS URL of the Git repo containing the skills       |
-| `GIT_TOKEN`          | ❌       | —                   | GitHub PAT for private repos                          |
+| `GIT_TOKEN`          | ❌       | —                   | PAT for private repos (GitHub or GitLab)              |
+| `GIT_USERNAME`       | ❌       | —                   | Username for token auth (`oauth2` for GitLab PATs)    |
 | `SKILLS_REPO_BRANCH` | ❌       | `master`            | Branch to follow                                      |
 | `SKILLS_SUBDIR`      | ❌       | `skills`            | Subfolder in the repo containing the `SKILL.md` files |
 | `SYNC_INTERVAL_SEC`  | ❌       | `300`               | Sync interval in seconds                              |
@@ -81,17 +82,32 @@ See the **IDE Configuration** section below.
 
 ### Private repo
 
-For a private repo, create a **GitHub Personal Access Token** (Fine-grained, scope `Contents: read`) and pass it to the container:
+#### GitHub
+
+Create a **Personal Access Token** (Fine-grained, scope `Contents: read`):
 
 ```bash
-# In .env
+# .env
 GIT_TOKEN=ghp_xxxxxxxxxxxxxx
 ```
 
+#### GitLab
+
+Create a **Personal Access Token** (scope `read_repository`) and set `GIT_USERNAME=oauth2`:
+
+```bash
+# .env
+GIT_TOKEN=glpat-xxxxxxxxxxxxxx
+GIT_USERNAME=oauth2
+```
+
+Then pass the variables to the container:
+
 ```yaml
-# docker-compose.yml — uncomment:
+# docker-compose.yml
 environment:
   GIT_TOKEN: "${GIT_TOKEN}"
+  GIT_USERNAME: "${GIT_USERNAME}"  # only needed for GitLab
 ```
 
 ## IDE Configuration
