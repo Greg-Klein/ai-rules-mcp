@@ -15,7 +15,7 @@
     "fast-glob": "^3.3.3",
     "gray-matter": "^4.0.3",
     "minimatch": "^10.0.1",
-    "simple-git": "^3.27.0",
+    "simple-git": "^3.36.0",
     "zod": "^3.25.11"
   },
   "devDependencies": {
