@@ -16,7 +16,7 @@
     "gray-matter": "^4.0.3",
     "minimatch": "^10.0.1",
     "simple-git": "4.0.2",
-    "zod": "^3.25.11"
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@types/express": "^5.0.2",
